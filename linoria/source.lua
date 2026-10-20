@@ -1,5 +1,5 @@
 local cloneref = (cloneref or clonereference or function(instance: any)
-    return instance
+	return instance
 end)
 local InputService: UserInputService = cloneref(game:GetService("UserInputService"))
 local TextService: TextService = cloneref(game:GetService("TextService"))
@@ -21,48 +21,48 @@ end
 
 local setclipboard = setclipboard or nil
 local getgenv = getgenv or function()
-    return shared
+	return shared
 end
 local ProtectGui = protectgui or (syn and syn.protect_gui) or function() end
 local GetHUI = gethui or function()
-    return CoreGui
+	return CoreGui
 end
 
 local assert = function(condition, errorMessage)
-    if not condition then
-        error(if errorMessage then errorMessage else "assert failed", 3)
-    end
+	if not condition then
+		error(if errorMessage then errorMessage else "assert failed", 3)
+	end
 end
 
 local function SafeParentUI(Instance: Instance, Parent: Instance | () -> Instance)
-    local success, _error = pcall(function()
-        if not Parent then
-            Parent = CoreGui
-        end
+	local success, _error = pcall(function()
+		if not Parent then
+			Parent = CoreGui
+		end
 
-        local DestinationParent
-        if typeof(Parent) == "function" then
-            DestinationParent = Parent()
-        else
-            DestinationParent = Parent
-        end
+		local DestinationParent
+		if typeof(Parent) == "function" then
+			DestinationParent = Parent()
+		else
+			DestinationParent = Parent
+		end
 
-        Instance.Parent = DestinationParent
-    end)
+		Instance.Parent = DestinationParent
+	end)
 
-    if not (success and Instance.Parent) then
-        Instance.Parent = LocalPlayer:WaitForChild("PlayerGui", math.huge)
-    end
+	if not (success and Instance.Parent) then
+		Instance.Parent = LocalPlayer:WaitForChild("PlayerGui", math.huge)
+	end
 end
 
 local function ParentUI(UI: Instance, SkipHiddenUI: boolean?)
-    if SkipHiddenUI then
-        SafeParentUI(UI, CoreGui)
-        return
-    end
+	if SkipHiddenUI then
+		SafeParentUI(UI, CoreGui)
+		return
+	end
 
-    pcall(ProtectGui, UI)
-    SafeParentUI(UI, GetHUI)
+	pcall(ProtectGui, UI)
+	SafeParentUI(UI, GetHUI)
 end
 
 local ScreenGui = Instance.new("ScreenGui")
@@ -312,7 +312,7 @@ end
 
 Library.MinSize = if Library.IsMobile then Vector2.new(550, 200) else Vector2.new(550, 300)
 
---// Functions \--
+--// Functions \\--
 local function ApplyDPIScale(Position)
     return UDim2.new(Position.X.Scale, Position.X.Offset * DPIScale, Position.Y.Scale, Position.Y.Offset * DPIScale)
 end
@@ -379,7 +379,7 @@ local function Trim(Text: string)
     return Text:match("^%s*(.-)%s*$")
 end
 
---// Icon Module \--
+--// Icon Module \\--
 type Icon = {
     Url: string,
     Id: number,
@@ -395,7 +395,7 @@ type IconModule = {
 
 local FetchIcons, Icons = pcall(function()
     return (loadstring(
-        game:HttpGet("https://raw.githubusercontent.com/deividcomsono/lucide-roblox-direct/refs/heads/main/source.lua")
+        game:HttpGet("https://raw.githubusercontent.com/mstudio45/lucide-roblox-direct/refs/heads/main/source.lua")
     ) :: () -> IconModule)()
 end)
 
@@ -405,7 +405,7 @@ function IsValidCustomIcon(Icon: string)
 end
 
 function Library:GetIcon(IconName: string)
-    if not FetchIcons then
+    if not FetchIcons or not Icons then
         return
     end
 
@@ -444,7 +444,7 @@ function Library:GetBetterColor(Color: Color3, Add: number): Color3
     )
 end
 
---// Library Functions \--
+--// Library Functions \\--
 function Library:Validate(Table: { [string]: any }, Template: { [string]: any }): { [string]: any }
     if typeof(Table) ~= "table" then
         return Template
@@ -669,6 +669,94 @@ function Library:MakeDraggableUsingParent(Instance, Parent, Cutoff, IsMainWindow
     end
 end
 
+function Library:MakeResizable(Instance, MinSize)
+    if Library.IsMobile then
+        return
+    end
+
+    Instance.Active = true
+    
+    local ResizerImage_Size = 25 * DPIScale
+    local ResizerImage_HoverTransparency = 0.5
+
+    local Resizer = Library:Create("Frame", {
+        SizeConstraint = Enum.SizeConstraint.RelativeXX;
+        BackgroundColor3 = Color3.new(0, 0, 0);
+        BackgroundTransparency = 1;
+        BorderSizePixel = 0;
+        Size = UDim2.new(0, 30, 0, 30);
+        Position = UDim2.new(1, -30, 1, -30);
+        Visible = true;
+        ClipsDescendants = true;
+        ZIndex = 1;
+        Parent = Instance;--Library.ScreenGui;
+    })
+
+    local ResizerImage = Library:Create("ImageButton", {
+        BackgroundColor3 = Library.AccentColor;
+        BackgroundTransparency = 1;
+        BorderSizePixel = 0;
+        Size = UDim2.new(2, 0, 2, 0);
+        Position = UDim2.new(1, -30, 1, -30);
+        ZIndex = 2;
+        Parent = Resizer;
+    })
+
+    local ResizerImageUICorner = Library:Create("UICorner", {
+        CornerRadius = UDim.new(0.5, 0);
+        Parent = ResizerImage;
+    })
+
+    Library:AddToRegistry(ResizerImage, { BackgroundColor3 = "AccentColor"; })
+
+    Resizer.Size = UDim2.fromOffset(ResizerImage_Size, ResizerImage_Size)
+    Resizer.Position = UDim2.new(1, -ResizerImage_Size, 1, -ResizerImage_Size)
+    MinSize = MinSize or Library.MinSize
+
+    local OffsetPos
+    Resizer.Parent = Instance
+
+    local function FinishResize(Transparency)
+        ResizerImage.Position = UDim2.new()
+        ResizerImage.Size = UDim2.new(2, 0, 2, 0)
+        ResizerImage.Parent = Resizer
+        ResizerImage.BackgroundTransparency = Transparency
+        ResizerImageUICorner.Parent = ResizerImage
+        OffsetPos = nil
+    end
+
+    ResizerImage.MouseButton1Down:Connect(function()
+        if not OffsetPos then
+            OffsetPos = Vector2.new(Mouse.X - (Instance.AbsolutePosition.X + Instance.AbsoluteSize.X), Mouse.Y - (Instance.AbsolutePosition.Y + Instance.AbsoluteSize.Y))
+
+            ResizerImage.BackgroundTransparency = 1
+            ResizerImage.Size = UDim2.fromOffset(Library.ScreenGui.AbsoluteSize.X, Library.ScreenGui.AbsoluteSize.Y)
+            ResizerImage.Position = UDim2.new()
+            ResizerImageUICorner.Parent = nil
+            ResizerImage.Parent = Library.ScreenGui
+        end
+    end)
+
+    ResizerImage.MouseMoved:Connect(function()
+        if OffsetPos then		
+            local MousePos = Vector2.new(Mouse.X - OffsetPos.X, Mouse.Y - OffsetPos.Y)
+            local FinalSize = Vector2.new(math.clamp(MousePos.X - Instance.AbsolutePosition.X, MinSize.X, math.huge), math.clamp(MousePos.Y - Instance.AbsolutePosition.Y, MinSize.Y, math.huge))
+            Instance.Size = UDim2.fromOffset(FinalSize.X, FinalSize.Y)
+        end
+    end)
+
+    ResizerImage.MouseEnter:Connect(function()
+        FinishResize(ResizerImage_HoverTransparency)
+    end)
+
+    ResizerImage.MouseLeave:Connect(function()
+        FinishResize(1)
+    end)
+
+    ResizerImage.MouseButton1Up:Connect(function()
+        FinishResize(ResizerImage_HoverTransparency)
+    end)
+end
 
 function Library:AddToolTip(InfoStr, DisabledInfoStr, HoverInstance)
     InfoStr = typeof(InfoStr) == "string" and InfoStr or nil
@@ -1031,9 +1119,9 @@ Library:GiveSignal(ScreenGui.DescendantRemoving:Connect(function(Instance)
     end
 end))
 
---// Templates \--
+--// Templates \\--
 local Templates = { -- TO-DO: do it for missing elements.
-    --// Window \--
+    --// Window \\--
     Window = {
         Title = "No Title",
         AutoShow = false,
@@ -1048,7 +1136,7 @@ local Templates = { -- TO-DO: do it for missing elements.
         Center = false
     },
 
-    --// Elements \--
+    --// Elements \\--
     Video = {
         Video = "",
         Looped = false,
@@ -1064,7 +1152,7 @@ local Templates = { -- TO-DO: do it for missing elements.
     }
 }
 
---// Addons \--
+--// Addons \\--
 local BaseAddons = {}
 do
     local BaseAddonsFuncs = {}
@@ -3159,7 +3247,7 @@ do
     end
 end
 
---// Groupbox Addons \--
+--// Groupbox Addons \\--
 local BaseGroupbox = {}
 do
     local BaseGroupboxFuncs = {}
@@ -3206,6 +3294,7 @@ do
             })
 
             Library:CreateLabel({
+                AutomaticSize = Enum.AutomaticSize.X;
                 BackgroundTransparency = 1;
                 Position = UDim2.fromScale(0.5, 0.5);
                 AnchorPoint = Vector2.new(0.5, 0.5);
@@ -6012,7 +6101,7 @@ do
     end
 end
 
---// Keybinds UI \--
+--// Keybinds UI \\--
 do
     local KeybindOuter = Library:Create("Frame", {
         AnchorPoint = Vector2.new(0, 0.5);
@@ -6085,7 +6174,7 @@ do
     Library:MakeDraggable(KeybindOuter)
 end
 
---// Watermark \--
+--// Watermark \\--
 do
     local WatermarkOuter = Library:Create("Frame", {
         BorderColor3 = Color3.new(0, 0, 0);
@@ -6162,7 +6251,7 @@ do
     end
 end
 
---// Notifications \--
+--// Notifications \\--
 do
     Library.LeftNotificationArea = Library:Create("Frame", {
         BackgroundTransparency = 1;
@@ -6430,7 +6519,7 @@ do
     end
 end
 
---// Window \--
+--// Window \\--
 function Library:CreateWindow(...)
     local Arguments = { ... }
     local WindowInfo = Templates.Window
@@ -6482,6 +6571,8 @@ function Library:CreateWindow(...)
     })
     LibraryMainOuterFrame = Outer
     Library:MakeDraggable(Outer, 25, true)
+    if WindowInfo.Resizable then Library:MakeResizable(Outer, Library.MinSize) end
+
     local Inner = Library:Create("Frame", {
         BackgroundColor3 = Library.MainColor;
         BorderColor3 = Library.AccentColor;
@@ -6497,20 +6588,14 @@ function Library:CreateWindow(...)
         BorderColor3 = "AccentColor";
     })
 
-    local TitleText = WindowInfo.Title or ""
-
     local WindowLabel = Library:CreateLabel({
-        Position = UDim2.new(0.5, 0, 0, 0);
-        AnchorPoint = Vector2.new(0.5, 0);
-        Size = UDim2.new(1, -16, 0, 25);
-        Text = TitleText;
-        TextXAlignment = Enum.TextXAlignment.Center;
-        TextTruncate = Enum.TextTruncate.AtEnd;
-        RichText = true;
+        Position = UDim2.new(0, 7, 0, 0);
+        Size = UDim2.new(0, 0, 0, 25);
+        Text = WindowInfo.Title or "";
+        TextXAlignment = Enum.TextXAlignment.Left;
         ZIndex = 1;
         Parent = Inner;
     })
-
 
     local MainSectionOuter = Library:Create("Frame", {
         BackgroundColor3 = Library.BackgroundColor;
@@ -6543,13 +6628,13 @@ function Library:CreateWindow(...)
     local TabArea = Library:Create("ScrollingFrame", {
         ScrollingDirection = Enum.ScrollingDirection.X;
         CanvasSize = UDim2.new(0, 0, 2, 0);
-        AutomaticCanvasSize = Enum.AutomaticSize.X;
         HorizontalScrollBarInset = Enum.ScrollBarInset.Always;
+        AutomaticCanvasSize = Enum.AutomaticSize.XY;
         ScrollBarThickness = 0;
         BackgroundTransparency = 1;
         Position = UDim2.new(0, 8 - WindowInfo.TabPadding, 0, 4);
         Size = UDim2.new(1, -10, 0, 26);
-        ZIndex = 5;
+        ZIndex = 1;
         Parent = MainSectionInner;
     })
 
@@ -6560,14 +6645,6 @@ function Library:CreateWindow(...)
         VerticalAlignment = Enum.VerticalAlignment.Center;
         Parent = TabArea;
     })
-
-    -- Keep the top-level tab bar canvas in sync with the tab buttons.
-    -- This avoids relying on AutomaticCanvasSize for the main/ui settings tabs.
-    local function UpdateTabAreaCanvas()
-        TabArea.CanvasSize = UDim2.new(0, TabListLayout.AbsoluteContentSize.X + 4, 0, 0)
-    end
-    TabListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(UpdateTabAreaCanvas)
-    task.defer(UpdateTabAreaCanvas)
 
     Library:Create("Frame", {
         BackgroundColor3 = Library.BackgroundColor;
@@ -6691,6 +6768,7 @@ function Library:CreateWindow(...)
             ZIndex = 9001,
             Visible = true,
             Parent = DialogOverlay,
+            AutomaticSize = Enum.AutomaticSize.Y,
             Text = "",
             AutoButtonColor = false,
         })
@@ -6700,6 +6778,7 @@ function Library:CreateWindow(...)
             BorderColor3 = Library.AccentColor,
             BorderMode = Enum.BorderMode.Inset,
             Size = UDim2.fromScale(1, 0),
+            AutomaticSize = Enum.AutomaticSize.Y,
             ZIndex = 9002,
             Parent = DialogFrame,
         })
@@ -6716,6 +6795,7 @@ function Library:CreateWindow(...)
         local InnerContainer = Library:Create("Frame", {
             BackgroundTransparency = 1,
             Size = UDim2.fromScale(1, 0),
+            AutomaticSize = Enum.AutomaticSize.Y,
             ZIndex = 9003,
             Parent = DialogInner,
         })
@@ -6743,6 +6823,7 @@ function Library:CreateWindow(...)
         local HeaderContainer = Library:Create("Frame", {
             BackgroundTransparency = 1,
             Size = UDim2.fromScale(1, 0),
+            AutomaticSize = Enum.AutomaticSize.Y,
             LayoutOrder = 1,
             ZIndex = 9003,
             Parent = InnerContainer,
@@ -6760,6 +6841,7 @@ function Library:CreateWindow(...)
         local TitleRow = Library:Create("Frame", {
             BackgroundTransparency = 1,
             Size = UDim2.new(1, 0, 0, 20),
+            AutomaticSize = Enum.AutomaticSize.Y,
             LayoutOrder = 1,
             ZIndex = 9003,
             Parent = HeaderContainer,
@@ -6775,6 +6857,7 @@ function Library:CreateWindow(...)
         local TitleLabel = Library:CreateLabel({
             BackgroundTransparency = 1,
             Size = UDim2.new(1, 0, 0, 18),
+            AutomaticSize = Enum.AutomaticSize.Y,
             Text = Info.Title or "Dialog",
             TextSize = 18,
             TextXAlignment = Enum.TextXAlignment.Left,
@@ -6791,6 +6874,7 @@ function Library:CreateWindow(...)
         local DescriptionLabel = Library:CreateLabel({
             BackgroundTransparency = 1,
             Size = UDim2.new(1, 0, 0, 14),
+            AutomaticSize = Enum.AutomaticSize.Y,
             Text = Info.Description or "Description",
             TextSize = 14,
             TextTransparency = Info.DescriptionColor and 0 or 0.2,
@@ -6810,6 +6894,7 @@ function Library:CreateWindow(...)
         DialogContainer = Library:Create("Frame", {
             BackgroundTransparency = 1,
             Size = UDim2.fromScale(1, 0),
+            AutomaticSize = Enum.AutomaticSize.Y,
             LayoutOrder = 4,
             Visible = false,
             ZIndex = 9003,
@@ -6837,6 +6922,7 @@ function Library:CreateWindow(...)
         ButtonsHolder = Library:Create("Frame", {
             BackgroundTransparency = 1,
             Size = UDim2.new(1, 0, 0, 0),
+            AutomaticSize = Enum.AutomaticSize.Y,
             LayoutOrder = 6,
             ZIndex = 9002,
             Parent = InnerContainer,
@@ -7148,7 +7234,7 @@ function Library:CreateWindow(...)
             BackgroundColor3 = Library.BackgroundColor;
             BorderColor3 = Library.OutlineColor;
             Size = UDim2.new(0, TabButtonWidth + 8 + 4, 0.85, 0);
-            ZIndex = 5;
+            ZIndex = 1;
             Parent = TabArea;
         })
 
@@ -7161,7 +7247,7 @@ function Library:CreateWindow(...)
             Position = UDim2.new(0, 0, 0, 0);
             Size = UDim2.new(1, 0, 1, -1);
             Text = Tab.Name;
-            ZIndex = 6;
+            ZIndex = 1;
             Parent = TabButton;
         })
 
@@ -7227,6 +7313,7 @@ do
                 BorderSizePixel = 0;
                 Size = UDim2.new(1, -8, 1, 0);
                 CanvasSize = UDim2.new(0, 0, 0, 0);
+                AutomaticCanvasSize = Enum.AutomaticSize.Y;
                 ScrollBarThickness = 3;
                 ZIndex = 5;
                 Parent = TopBarInner;
@@ -8132,7 +8219,7 @@ Library:GiveSignal(Players.PlayerRemoving:Connect(OnPlayerChange))
 Library:GiveSignal(Teams.ChildAdded:Connect(OnTeamChange))
 Library:GiveSignal(Teams.ChildRemoved:Connect(OnTeamChange))
 
---// Rainbow Handler \--
+--// Rainbow Handler \\--
 local RainbowStep = 0
 local Hue = 0
 
@@ -8156,6 +8243,7 @@ Library:GiveSignal(RunService.RenderStepped:Connect(function(Delta)
     end
 end))
 
+----
 getgenv().Linoria = Library
 if getgenv().skip_getgenv_linoria ~= true then getgenv().Library = Library end
 return Library
