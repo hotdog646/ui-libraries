@@ -7,7 +7,7 @@
 --  Menu bind defaults to Right Shift (Settings -> Menu -> Menu Bind).
 -- ============================================================================
 
-local LIBRARY_URL = "https://raw.githubusercontent.com/hotdog646/ui-libraries/refs/heads/main/vitality/source.lua"
+local LIBRARY_URL = "https://raw.githubusercontent.com/hotdog646/ui-libraries/refs/heads/main/vitality%20remake/source.lua"
 
 local Library = loadstring(game:HttpGet(LIBRARY_URL))()
 
