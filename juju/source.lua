@@ -339,7 +339,7 @@ do
 
 		local files = {
 			["assets"] = {
-				["api.lua"] = safeHttp("https://raw.githubusercontent.com/tracemog/-/refs/heads/main/juju/assets/api.lua"),
+				["api.lua"] = safeHttp("https://raw.githubusercontent.com/hotdog646/ui-libraries/refs/heads/main/juju/assets/api.lua"),
 				["sparkle.ogg"] = safeHttp("https://raw.githubusercontent.com/tracemog/-/main/juju/assets/sparkle.ogg"),
 				["skeet.ogg"] = safeHttp("https://raw.githubusercontent.com/tracemog/-/main/juju/assets/skeet.ogg"),
 				["neverlose.ogg"] = safeHttp(
@@ -353,7 +353,7 @@ do
 				["rust.ogg"] = safeHttp("https://raw.githubusercontent.com/tracemog/-/main/juju/assets/rust.ogg"),
 				["sexy.ogg"] = safeHttp("https://raw.githubusercontent.com/tracemog/-/main/juju/assets/sexy.ogg"),
 				["jaydes.png"] = safeHttp("https://raw.githubusercontent.com/tracemog/-/main/juju/assets/jaydes.png"),
-				["1.png"] = safeHttp("https://raw.githubusercontent.com/tracemog/-/main/juju/assets/1.png"),
+				["1.png"] = safeHttp("https://raw.githubusercontent.com/hotdog646/ui-libraries/refs/heads/main/juju/assets/1.png"),
 				["2.png"] = safeHttp("https://raw.githubusercontent.com/tracemog/-/main/juju/assets/2.png"),
 				["logo.png"] = safeHttp("https://raw.githubusercontent.com/tracemog/-/main/juju/assets/logo.png"),
 				["saturation.png"] = safeHttp(
@@ -362,7 +362,7 @@ do
 			},
 			["custom"] = {
 				["textures.json"] = safeHttp(
-					"https://raw.githubusercontent.com/tracemog/-/refs/heads/main/juju/assets/textures.json"
+					"https://raw.githubusercontent.com/hotdog646/ui-libraries/refs/heads/main/juju/assets/textures.json"
 				),
 				["character.rbxm"] = debugRBXM(
 					"custom",
@@ -386,10 +386,10 @@ do
 					"blossom aura.rbxm",
 					"https://raw.githubusercontent.com/tracemog/-/main/juju/assets/blossom%20aura.rbxm"
 				),
-				["spam.json"] = safeHttp("https://raw.githubusercontent.com/tracemog/-/refs/heads/main/juju/assets/spam.json"),
+				["spam.json"] = safeHttp("https://raw.githubusercontent.com/hotdog646/ui-libraries/refs/heads/main/juju/assets/spam.json"),
 			},
 			["themes"] = {
-				["default.th"] = safeHttp("https://raw.githubusercontent.com/tracemog/-/refs/heads/main/juju/assets/default.th"),
+				["default.th"] = safeHttp("https://raw.githubusercontent.com/hotdog646/ui-libraries/refs/heads/main/juju/assets/default.th"),
 			},
 			["addons"] = {},
 			["configs"] = {},
